@@ -34,7 +34,7 @@ class Presence(object):
 
         if not os.path.exists(self.prefs_file):
             prefs = {'appid': '3c7d8f58-6bf4-45ff-9eb6-c8dba534eafc',
-                     'service': 'ws://localhost:8282/myapps/',
+                     'service': 'ws://presence.services.mozilla.com/_presence/myapps/',
                      'token': '05eed446-9b1d-403b-95c6-744b8e1e6015'}
 
         else:
