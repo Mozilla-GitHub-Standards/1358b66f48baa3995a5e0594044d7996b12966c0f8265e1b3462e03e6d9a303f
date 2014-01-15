@@ -64,6 +64,7 @@ class Presence(object):
             self._ws.close()
 
         url = os.path.join(self.service, self.appid)
+        print "Connecting to %s" % url
         self._ws = PresenceClient(url, token=self.token,
                                   onreceive=self.update_status)
 
