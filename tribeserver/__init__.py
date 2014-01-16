@@ -33,8 +33,12 @@ class TribeHandler(tornado.websocket.WebSocketHandler):
         self._user = None
         app.presence.register(self._presence_update)
 
+    def open(self):
+        print 'handler opened'
+
     def _presence_update(self, data):
         # just proxying the message
+        print 'proxying ' + str(data)
         self.write_message(dumps(data))
 
     def get_username(self):
@@ -43,11 +47,12 @@ class TribeHandler(tornado.websocket.WebSocketHandler):
         return self._user.name
 
     def on_message(self, message):
+
+        print 'received from tribe client box ' + str(message)
         message = loads(message)
         self._user = user = User(message['user'])
         action = message.get('action')
 
-        print 'received from js chat box ' + str(message)
 
         if 'status' in message:
             action = 'status'

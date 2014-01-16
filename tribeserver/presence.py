@@ -3,7 +3,7 @@ from ws4py.client.tornadoclient import TornadoWebSocketClient
 import json
 
 
-DATA_DIR = '/tmp/boomchat/'
+DATA_DIR = '/tmp/tribe/'
 if not os.path.exists(DATA_DIR):
     os.mkdir(DATA_DIR)
 
@@ -16,12 +16,17 @@ class PresenceClient(TornadoWebSocketClient):
         self.token = token
 
     def opened(self):
+        print 'ws opened on the presence server'
         self.send(json.dumps({'token': self.token,
                               'action': 'auth'}))
+        print 'auth sent - were in' 
+     
+    def closed(self, code, reason=None):
+        print 'websocket closed. code: %s, reason: %s' % (str(code), str(reason))
 
     def received_message(self, msg):
+        print 'received from presence: %s' % str(msg)
         data = json.loads(msg.data)
-        print 'received from presence: %s' % str(data)
         self.onreceive(data)
 
     def _cleanup(self):
@@ -34,7 +39,7 @@ class Presence(object):
 
         if not os.path.exists(self.prefs_file):
             prefs = {'appid': '3c7d8f58-6bf4-45ff-9eb6-c8dba534eafc',
-                     'service': 'ws://presence.services.mozilla.com/_presence/myapps/',
+                     'service': 'ws://54.184.23.239:8282/myapps/',
                      'token': '05eed446-9b1d-403b-95c6-744b8e1e6015'}
 
         else:
@@ -49,6 +54,7 @@ class Presence(object):
         self.statuses = {}
         self._subs = []
         self._ws = None
+        print 'initializing connection to the presence service'
         self.initialize()
 
     def sync(self):
@@ -69,6 +75,7 @@ class Presence(object):
                                   onreceive=self.update_status)
 
         self._ws.connect()
+        print 'connected'
 
     def register(self, callable):
         self._subs.append(callable)
@@ -81,8 +88,7 @@ class Presence(object):
 
     # triggered by the presence service via websockets
     def update_status(self, data):
-        # proxying the data directly
-        # to all
+        # proxying the data directly to all
         for sub in self._subs:
             sub(data)
 
