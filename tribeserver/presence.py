@@ -97,4 +97,5 @@ class Presence(object):
                                   'action': 'notify',
                                   'source': source,
                                   'target': target,
+                                  'appid': self.appid,
                                   'message': message}))
